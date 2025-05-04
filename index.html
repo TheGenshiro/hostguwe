@@ -1,0 +1,703 @@
+<html lang="id" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Digital Product Store</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap"
+    rel="stylesheet"
+  />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+  />
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #0f172a;
+      color: #f1f5f9;
+      overflow-x: hidden;
+    }
+    /* Parallax container */
+    .parallax {
+      perspective: 1px;
+      height: 100vh;
+      overflow-x: hidden;
+      overflow-y: auto;
+      scroll-behavior: smooth;
+      scroll-snap-type: y mandatory;
+    }
+    /* Parallax layers */
+    .parallax__layer {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      transform-origin: 0 0;
+    }
+    .parallax__layer--base {
+      transform: translateZ(0);
+      z-index: 10;
+      position: relative;
+    }
+    .parallax__layer--back {
+      transform: translateZ(-1px) scale(2);
+      z-index: 1;
+      filter: blur(12px);
+      opacity: 0.3;
+    }
+    /* Smooth fade transition for pages */
+    .page-enter {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    .page-enter-active {
+      opacity: 1;
+      transform: translateY(0);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    .page-exit {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .page-exit-active {
+      opacity: 0;
+      transform: translateY(-20px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    /* Loading spinner */
+    .spinner {
+      border: 4px solid rgba(255, 255, 255, 0.2);
+      border-top: 4px solid #3b82f6;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      animation: spin 1s linear infinite;
+      margin-left: 0.5rem;
+    }
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+    /* Scrollbar styling */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #1e293b;
+    }
+    ::-webkit-scrollbar-thumb {
+      background-color: #3b82f6;
+      border-radius: 10px;
+      border: 2px solid #1e293b;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 min-h-screen flex flex-col">
+  <header class="fixed top-0 left-0 right-0 bg-slate-900/80 backdrop-blur-md z-50 shadow-md">
+    <nav class="container mx-auto flex items-center justify-between py-4 px-6 md:px-12">
+      <a href="#" id="nav-home" class="text-2xl font-semibold text-blue-500 hover:text-blue-400 transition duration-300">AutomationBot</a>
+      <ul class="hidden md:flex space-x-8 text-slate-300 font-medium">
+        <li><a href="#" id="nav-home-link" class="hover:text-blue-400 transition duration-300">Beranda</a></li>
+        <li><a href="#" id="nav-vps-link" class="hover:text-blue-400 transition duration-300">VPS</a></li>
+        <li><a href="#" id="nav-panel-link" class="hover:text-blue-400 transition duration-300">Panel</a></li>
+        <li><a href="#" id="nav-domain-link" class="hover:text-blue-400 transition duration-300">Domain</a></li>
+        <li><a href="#" id="nav-script-link" class="hover:text-blue-400 transition duration-300">Script</a></li>
+      </ul>
+      <button id="mobile-menu-button" class="md:hidden text-slate-300 hover:text-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400 rounded">
+        <i class="fas fa-bars fa-lg"></i>
+      </button>
+    </nav>
+    <div id="mobile-menu" class="hidden md:hidden bg-slate-900/90 backdrop-blur-md">
+      <ul class="flex flex-col space-y-3 p-4 text-slate-300 font-medium">
+        <li><a href="#" id="mobile-nav-home-link" class="hover:text-blue-400 transition duration-300">Beranda</a></li>
+        <li><a href="#" id="mobile-nav-vps-link" class="hover:text-blue-400 transition duration-300">VPS</a></li>
+        <li><a href="#" id="mobile-nav-panel-link" class="hover:text-blue-400 transition duration-300">Panel</a></li>
+        <li><a href="#" id="mobile-nav-domain-link" class="hover:text-blue-400 transition duration-300">Domain</a></li>
+        <li><a href="#" id="mobile-nav-script-link" class="hover:text-blue-400 transition duration-300">Script</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <main id="app" class="flex-grow pt-20 relative overflow-hidden">
+    <!-- Content will be injected here -->
+  </main>
+
+  <footer class="bg-slate-900/90 backdrop-blur-md text-slate-400 text-center py-6 mt-12 select-none">
+    &copy; 2024 AutomationBot. All rights reserved.
+  </footer>
+
+  <script>
+    // Data for categories and products
+    const categories = [
+      {
+        id: 'vps',
+        name: 'VPS',
+        description: 'Virtual Private Server dengan performa tinggi dan uptime terbaik.',
+        image: 'https://files.catbox.moe/0vruzs.png',
+        products: [
+          {
+            id: 'vps1',
+            name: 'VPS RAM 4GB CORE 2',
+            price: 'Rp 30.000 / bulan',
+            ram: '4GB',
+            cpu: '2 Core',
+            storage: '40GB SSD',
+            bandwidth: '1TB',
+            description: 'VPS Basic cocok untuk website kecil dan aplikasi ringan.',
+            image: 'https://files.catbox.moe/0vruzs.png',
+          },
+          {
+            id: 'vps2',
+            name: 'VPS RAM 8GB CORE 4',
+            price: 'Rp 40.000 / bulan',
+            ram: '8GB',
+            cpu: '4 Core',
+            storage: '80GB SSD',
+            bandwidth: '3TB',
+            description: 'VPS Pro untuk kebutuhan aplikasi dan website menengah.',
+            image: 'https://files.catbox.moe/0vruzs.png',
+          },
+          {
+            id: 'vps3',
+            name: 'VPS RAM 16GB CORE 4',
+            price: 'Rp 60.000 / bulan',
+            ram: '16GB',
+            cpu: '4 Core',
+            storage: '160GB SSD',
+            bandwidth: '5TB',
+            description: 'VPS Ultra untuk aplikasi berat dan trafik tinggi.',
+            image: 'https://files.catbox.moe/0vruzs.png',
+          },
+        ],
+      },
+      {
+        id: 'panel',
+        name: 'Panel',
+        description: 'Panel kontrol hosting yang mudah digunakan dan powerful.',
+        image: 'https://files.catbox.moe/dp96jy.jpeg',
+        products: [
+          {
+            id: 'panel1',
+            name: 'Panel Basic',
+            price: 'Rp 10.000 / bulan',
+            description: 'Panel Basic dengan fitur standar untuk hosting kecil.',
+            image: 'https://files.catbox.moe/dp96jy.jpeg',
+          },
+          {
+            id: 'panel2',
+            name: 'Panel Private',
+            price: 'Rp 20.000 / bulan',
+            description: 'Panel Private dengan fitur lengkap dan dukungan multi-user.',
+            image: 'https://files.catbox.moe/dp96jy.jpeg',
+          },
+        ],
+      },
+      {
+        id: 'domain',
+        name: 'Domain',
+        description: 'Registrasi domain dengan harga terbaik dan layanan cepat.',
+        image: 'https://files.catbox.moe/vzx31e.png',
+        products: [
+          {
+            id: 'domain1',
+            name: '.web.id',
+            price: 'Rp 20.000 / tahun',
+            description: 'Domain .web.id populer untuk bisnis dan personal.',
+            image: 'https://files.catbox.moe/vzx31e.png',
+          },
+          {
+            id: 'domain2',
+            name: '.my.id',
+            price: 'Rp 20.000 / tahun',
+            description: 'Domain .my.id resmi untuk Indonesia.',
+            image: 'https://files.catbox.moe/vzx31e.png',
+          },
+          {
+            id: 'domain3',
+            name: '.biz.id',
+            price: 'Rp 20.000 / tahun',
+            description: 'Domain .biz.id untuk jaringan dan teknologi.',
+            image: 'https://files.catbox.moe/vzx31e.png',
+          },
+        ],
+      },
+      {
+        id: 'script',
+        name: 'Script',
+        description: 'Script siap pakai untuk berbagai kebutuhan website dan aplikasi.',
+        image: 'https://files.catbox.moe/cvjkf0.png',
+        products: [
+          {
+            id: 'script1',
+            name: 'Script Bot WhatsApp',
+            price: 'Rp 50.000',
+            description: 'Script toko online lengkap dengan fitur pembayaran.',
+            image: 'https://files.catbox.moe/cvjkf0.png',
+          },
+          {
+            id: 'script2',
+            name: 'Blog Script',
+            price: 'Rp 50.000',
+            description: 'Script blog dengan sistem manajemen konten sederhana.',
+            image: 'https://files.catbox.moe/cvjkf0.png',
+          },
+          {
+            id: 'script3',
+            name: 'Portfolio Script',
+            price: 'Rp 50.000',
+            description: 'Script portfolio profesional untuk menampilkan karya.',
+            image: 'https://files.catbox.moe/cvjkf0.png',
+          },
+        ],
+      },
+    ];
+
+    // Seller WhatsApp number (replace with actual number)
+    const sellerWhatsApp = '62882015566643';
+
+    // Main app container
+    const app = document.getElementById('app');
+
+    // Mobile menu toggle
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+    mobileMenuButton.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+
+    // Navigation links
+    const navLinks = [
+      { id: 'nav-home-link', page: 'home' },
+      { id: 'nav-vps-link', page: 'vps' },
+      { id: 'nav-panel-link', page: 'panel' },
+      { id: 'nav-domain-link', page: 'domain' },
+      { id: 'nav-script-link', page: 'script' },
+      { id: 'mobile-nav-home-link', page: 'home' },
+      { id: 'mobile-nav-vps-link', page: 'vps' },
+      { id: 'mobile-nav-panel-link', page: 'panel' },
+      { id: 'mobile-nav-domain-link', page: 'domain' },
+      { id: 'mobile-nav-script-link', page: 'script' },
+    ];
+
+    navLinks.forEach(({ id, page }) => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.addEventListener('click', (e) => {
+          e.preventDefault();
+          mobileMenu.classList.add('hidden');
+          navigateTo(page);
+        });
+      }
+    });
+
+    // Animate page transitions
+    function animatePageTransition(newContent) {
+      return new Promise((resolve) => {
+        app.classList.add('page-exit-active');
+        setTimeout(() => {
+          app.innerHTML = newContent;
+          app.classList.remove('page-exit-active');
+          app.classList.add('page-enter-active');
+          setTimeout(() => {
+            app.classList.remove('page-enter-active');
+            resolve();
+          }, 500);
+        }, 400);
+      });
+    }
+
+    // Render homepage with categories
+    function renderHome() {
+      const content = `
+        <section class="relative min-h-[calc(100vh-5rem)] flex flex-col items-center justify-center px-6 md:px-12 overflow-hidden">
+          <img src="https://placehold.co/1920x1080/png?text=Abstract+Blue+Tech+Background+with+Blur+Effect" alt="Abstract blue technology background with blur effect and digital lines" class="absolute inset-0 w-full h-full object-cover object-center filter blur-xl opacity-30 -z-10" />
+          <h1 class="text-4xl md:text-6xl font-extrabold text-blue-400 mb-8 drop-shadow-lg animate-fadeInUp">Selamat Datang di AutomationBot</h1>
+          <p class="text-slate-300 max-w-xl text-center mb-12 animate-fadeInUp delay-200">Temukan produk digital terbaik untuk kebutuhan hosting, domain, panel, dan script Anda.</p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 w-full max-w-7xl">
+            ${categories
+              .map(
+                (cat) => `
+              <a href="#" data-category="${cat.id}" class="group relative rounded-xl overflow-hidden shadow-lg bg-slate-800/70 backdrop-blur-md border border-slate-700 hover:border-blue-500 transition duration-500 transform hover:-translate-y-2 hover:scale-105 cursor-pointer">
+                <img src="${cat.image}" alt="Gambar kategori produk ${cat.name} dengan latar belakang teknologi modern dan warna dominan biru" class="w-full h-48 object-cover object-center transition-transform duration-500 group-hover:scale-110" />
+                <div class="p-5">
+                  <h2 class="text-xl font-semibold text-blue-400 mb-2 group-hover:text-blue-300 transition duration-300">${cat.name}</h2>
+                  <p class="text-slate-300 text-sm">${cat.description}</p>
+                </div>
+                <div class="absolute top-3 right-3 text-blue-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <i class="fas fa-arrow-right fa-lg"></i>
+                </div>
+              </a>
+            `
+              )
+              .join('')}
+          </div>
+        </section>
+      `;
+      return content;
+    }
+
+    // Render product list page for a category
+    function renderCategoryPage(categoryId) {
+      const category = categories.find((c) => c.id === categoryId);
+      if (!category) return renderHome();
+
+      const content = `
+        <section class="relative min-h-[calc(100vh-5rem)] px-6 md:px-12 py-12 max-w-7xl mx-auto">
+          <button id="back-to-home" class="mb-8 inline-flex items-center text-blue-400 hover:text-blue-300 font-semibold transition duration-300 focus:outline-none focus:ring-2 focus:ring-blue-400 rounded">
+            <i class="fas fa-arrow-left mr-2"></i> Kembali ke Beranda
+          </button>
+          <div class="flex flex-col md:flex-row items-center md:items-start gap-8 mb-12">
+            <img src="${category.image}" alt="Gambar kategori produk ${category.name} dengan latar belakang teknologi modern dan warna dominan biru" class="w-full md:w-1/2 rounded-xl shadow-lg object-cover object-center" />
+            <div class="md:w-1/2 text-slate-300">
+              <h1 class="text-4xl font-extrabold text-blue-400 mb-4">${category.name}</h1>
+              <p class="text-lg">${category.description}</p>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            ${category.products
+              .map((product) => {
+                if (categoryId === 'panel') {
+                  // Panel products link to product detail page with form
+                  return `
+                    <div class="bg-slate-800/70 backdrop-blur-md rounded-xl border border-slate-700 shadow-lg flex flex-col overflow-hidden hover:shadow-blue-500/50 transition-shadow duration-500">
+                      <img src="${product.image}" alt="Gambar produk panel ${product.name} dengan tampilan dashboard hosting modern" class="w-full h-48 object-cover object-center" />
+                      <div class="p-5 flex flex-col flex-grow">
+                        <h2 class="text-2xl font-semibold text-blue-400 mb-2">${product.name}</h2>
+                        <p class="text-slate-300 mb-3 flex-grow">${product.description}</p>
+                        <p class="text-blue-300 font-semibold mb-4">${product.price}</p>
+                        <button data-category="${categoryId}" data-product-id="${product.id}" class="btn-detail-panel bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 rounded-md transition duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-400 flex items-center justify-center">
+                          Lihat Detail <i class="fas fa-arrow-right ml-2"></i>
+                        </button>
+                      </div>
+                    </div>
+                  `;
+                } else {
+                  // Other categories product detail page is simple
+                  return `
+                    <div class="bg-slate-800/70 backdrop-blur-md rounded-xl border border-slate-700 shadow-lg flex flex-col overflow-hidden hover:shadow-blue-500/50 transition-shadow duration-500">
+                      <img src="${product.image}" alt="Gambar produk ${category.name} ${product.name} dengan tampilan modern dan profesional" class="w-full h-48 object-cover object-center" />
+                      <div class="p-5 flex flex-col flex-grow">
+                        <h2 class="text-2xl font-semibold text-blue-400 mb-2">${product.name}</h2>
+                        <p class="text-slate-300 mb-3 flex-grow">${product.description}</p>
+                        <p class="text-blue-300 font-semibold mb-4">${product.price}</p>
+                        <button data-category="${categoryId}" data-product-id="${product.id}" class="btn-detail bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 rounded-md transition duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-400 flex items-center justify-center">
+                          Lihat Detail <i class="fas fa-arrow-right ml-2"></i>
+                        </button>
+                      </div>
+                    </div>
+                  `;
+                }
+              })
+              .join('')}
+          </div>
+        </section>
+      `;
+      return content;
+    }
+
+    // Render product detail page for non-panel products
+    function renderProductDetail(categoryId, productId) {
+      const category = categories.find((c) => c.id === categoryId);
+      if (!category) return renderHome();
+      const product = category.products.find((p) => p.id === productId);
+      if (!product) return renderCategoryPage(categoryId);
+
+      const content = `
+        <section class="relative min-h-[calc(100vh-5rem)] px-6 md:px-12 py-12 max-w-4xl mx-auto">
+          <button id="back-to-category" class="mb-8 inline-flex items-center text-blue-400 hover:text-blue-300 font-semibold transition duration-300 focus:outline-none focus:ring-2 focus:ring-blue-400 rounded">
+            <i class="fas fa-arrow-left mr-2"></i> Kembali ke ${category.name}
+          </button>
+          <div class="bg-slate-800/70 backdrop-blur-md rounded-xl border border-slate-700 shadow-lg overflow-hidden flex flex-col md:flex-row gap-8 p-6">
+            <img src="${product.image}" alt="Gambar produk ${category.name} ${product.name} dengan tampilan modern dan profesional" class="w-full md:w-1/2 rounded-lg object-cover object-center" />
+            <div class="flex flex-col justify-between md:w-1/2 text-slate-300">
+              <div>
+                <h1 class="text-4xl font-extrabold text-blue-400 mb-4">${product.name}</h1>
+                <p class="mb-4">${product.description}</p>
+                ${product.ram ? `<p><strong>RAM:</strong> ${product.ram}</p>` : ''}
+                ${product.cpu ? `<p><strong>CPU:</strong> ${product.cpu}</p>` : ''}
+                ${product.storage ? `<p><strong>Storage:</strong> ${product.storage}</p>` : ''}
+                ${product.bandwidth ? `<p><strong>Bandwidth:</strong> ${product.bandwidth}</p>` : ''}
+                <p class="text-blue-300 font-semibold text-2xl mt-4">${product.price}</p>
+              </div>
+              <button id="btn-buy" data-category="${categoryId}" data-product-id="${productId}" class="mt-6 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 rounded-md transition duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-400 flex items-center justify-center">
+                Beli Sekarang <i class="fas fa-shopping-cart ml-3"></i>
+              </button>
+            </div>
+          </div>
+        </section>
+      `;
+      return content;
+    }
+
+    // Render product detail page for Panel with form
+    function renderPanelProductDetail(productId) {
+      const category = categories.find((c) => c.id === 'panel');
+      if (!category) return renderHome();
+      const product = category.products.find((p) => p.id === productId);
+      if (!product) return renderCategoryPage('panel');
+
+      // RAM options 1GB to 10GB + Unlimited
+      const ramOptions = [];
+      for (let i = 1; i <= 10; i++) {
+        ramOptions.push(`<option value="${i}GB">${i}GB</option>`);
+      }
+      ramOptions.push('<option value="Unlimited">Unlimited</option>');
+
+      const content = `
+        <section class="relative min-h-[calc(100vh-5rem)] px-6 md:px-12 py-12 max-w-4xl mx-auto">
+          <button id="back-to-category" class="mb-8 inline-flex items-center text-blue-400 hover:text-blue-300 font-semibold transition duration-300 focus:outline-none focus:ring-2 focus:ring-blue-400 rounded">
+            <i class="fas fa-arrow-left mr-2"></i> Kembali ke Panel
+          </button>
+          <div class="bg-slate-800/70 backdrop-blur-md rounded-xl border border-slate-700 shadow-lg overflow-hidden flex flex-col md:flex-row gap-8 p-6">
+            <img src="${product.image}" alt="Gambar produk panel ${product.name} dengan tampilan dashboard hosting modern" class="w-full md:w-1/2 rounded-lg object-cover object-center" />
+            <div class="flex flex-col justify-between md:w-1/2 text-slate-300">
+              <div>
+                <h1 class="text-4xl font-extrabold text-blue-400 mb-4">${product.name}</h1>
+                <p class="mb-4">${product.description}</p>
+                <p class="text-blue-300 font-semibold text-2xl mb-6">${product.price}</p>
+                <form id="panel-buy-form" class="space-y-6" novalidate>
+                  <div>
+                    <label for="ram" class="block mb-2 font-semibold">Pilih RAM</label>
+                    <select id="ram" name="ram" required class="w-full rounded-md bg-slate-700 text-slate-200 p-3 focus:outline-none focus:ring-2 focus:ring-blue-400 transition">
+                      <option value="" disabled selected>Pilih RAM</option>
+                      ${ramOptions.join('')}
+                    </select>
+                    <p id="ram-error" class="text-red-500 text-sm mt-1 hidden">RAM harus dipilih.</p>
+                  </div>
+                  <div>
+                    <label for="name" class="block mb-2 font-semibold">Nama Anda</label>
+                    <input type="text" id="name" name="name" placeholder="Masukkan nama Anda" required minlength="3" maxlength="50" class="w-full rounded-md bg-slate-700 text-slate-200 p-3 focus:outline-none focus:ring-2 focus:ring-blue-400 transition" />
+                    <p id="name-error" class="text-red-500 text-sm mt-1 hidden">Nama harus diisi (3-50 karakter).</p>
+                  </div>
+                  <button type="submit" id="btn-buy" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 rounded-md transition duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-400 flex items-center justify-center">
+                    Beli Sekarang <i class="fas fa-shopping-cart ml-3"></i>
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </section>
+      `;
+      return content;
+    }
+
+    // Show loading spinner on button
+    function setLoading(button, loading) {
+      if (loading) {
+        button.disabled = true;
+        button.classList.add('cursor-wait');
+        if (!button.querySelector('.spinner')) {
+          const spinner = document.createElement('span');
+          spinner.className = 'spinner';
+          button.appendChild(spinner);
+        }
+      } else {
+        button.disabled = false;
+        button.classList.remove('cursor-wait');
+        const spinner = button.querySelector('.spinner');
+        if (spinner) spinner.remove();
+      }
+    }
+
+    // Scroll to top smoothly
+    function scrollToTop() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Navigate to page
+    async function navigateTo(page, productId = null) {
+      scrollToTop();
+      if (page === 'home') {
+        const content = renderHome();
+        await animatePageTransition(content);
+        attachHomeListeners();
+      } else if (page === 'vps' || page === 'domain' || page === 'script' || page === 'panel') {
+        if (productId) {
+          if (page === 'panel') {
+            const content = renderPanelProductDetail(productId);
+            await animatePageTransition(content);
+            attachPanelProductListeners();
+          } else {
+            const content = renderProductDetail(page, productId);
+            await animatePageTransition(content);
+            attachProductDetailListeners();
+          }
+        } else {
+          const content = renderCategoryPage(page);
+          await animatePageTransition(content);
+          attachCategoryListeners();
+        }
+      } else {
+        // fallback to home
+        const content = renderHome();
+        await animatePageTransition(content);
+        attachHomeListeners();
+      }
+    }
+
+    // Attach listeners on homepage category cards
+    function attachHomeListeners() {
+      const categoryCards = app.querySelectorAll('a[data-category]');
+      categoryCards.forEach((card) => {
+        card.addEventListener('click', (e) => {
+          e.preventDefault();
+          const categoryId = card.getAttribute('data-category');
+          navigateTo(categoryId);
+        });
+      });
+    }
+
+    // Attach listeners on category page product buttons
+    function attachCategoryListeners() {
+      // Back to home button
+      const backBtn = document.getElementById('back-to-home');
+      if (backBtn) {
+        backBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          navigateTo('home');
+        });
+      }
+
+      // Product detail buttons
+      const detailButtons = app.querySelectorAll('.btn-detail, .btn-detail-panel');
+      detailButtons.forEach((btn) => {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          const categoryId = btn.getAttribute('data-category');
+          const productId = btn.getAttribute('data-product-id');
+          navigateTo(categoryId, productId);
+        });
+      });
+    }
+
+    // Attach listeners on product detail page (non-panel)
+    function attachProductDetailListeners() {
+      // Back to category button
+      const backBtn = document.getElementById('back-to-category');
+      if (backBtn) {
+        backBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          const categoryId = backBtn.textContent.includes('Panel') ? 'panel' : null;
+          if (categoryId) {
+            navigateTo(categoryId);
+          } else {
+            // fallback: parse from button text
+            const text = backBtn.textContent.trim();
+            const catName = text.replace('Kembali ke ', '').trim().toLowerCase();
+            navigateTo(catName);
+          }
+        });
+      }
+
+      // Buy button
+      const buyBtn = document.getElementById('btn-buy');
+      if (buyBtn) {
+        buyBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          const categoryId = buyBtn.getAttribute('data-category');
+          const productId = buyBtn.getAttribute('data-product-id');
+          const category = categories.find((c) => c.id === categoryId);
+          if (!category) return;
+          const product = category.products.find((p) => p.id === productId);
+          if (!product) return;
+
+          setLoading(buyBtn, true);
+          // Compose WhatsApp message
+          const message = `Hai, saya ingin membeli produk, yaitu: ${category.name}: ${product.name} TERIMA KASIH`;
+          const url = `https://wa.me/${sellerWhatsApp}?text=${encodeURIComponent(message)}`;
+          setTimeout(() => {
+            setLoading(buyBtn, false);
+            window.open(url, '_blank');
+          }, 1200);
+        });
+      }
+    }
+
+    // Attach listeners on panel product detail page (with form)
+    function attachPanelProductListeners() {
+      // Back to category button
+      const backBtn = document.getElementById('back-to-category');
+      if (backBtn) {
+        backBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          navigateTo('panel');
+        });
+      }
+
+      const form = document.getElementById('panel-buy-form');
+      const ramSelect = document.getElementById('ram');
+      const nameInput = document.getElementById('name');
+      const ramError = document.getElementById('ram-error');
+      const nameError = document.getElementById('name-error');
+      const buyBtn = document.getElementById('btn-buy');
+
+      function validateForm() {
+        let valid = true;
+        if (!ramSelect.value) {
+          ramError.classList.remove('hidden');
+          valid = false;
+        } else {
+          ramError.classList.add('hidden');
+        }
+        const nameVal = nameInput.value.trim();
+        if (nameVal.length < 3 || nameVal.length > 50) {
+          nameError.classList.remove('hidden');
+          valid = false;
+        } else {
+          nameError.classList.add('hidden');
+        }
+        return valid;
+      }
+
+      ramSelect.addEventListener('change', validateForm);
+      nameInput.addEventListener('input', validateForm);
+
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        if (!validateForm()) return;
+
+        setLoading(buyBtn, true);
+
+        const ram = ramSelect.value;
+        const name = nameInput.value.trim();
+        const message = `Hai, saya ingin membeli produk, yaitu: Panel: ${ram} Nama: ${name} TERIMA KASIH`;
+        const url = `https://wa.me/${sellerWhatsApp}?text=${encodeURIComponent(message)}`;
+
+        setTimeout(() => {
+          setLoading(buyBtn, false);
+          window.open(url, '_blank');
+        }, 1200);
+      });
+    }
+
+    // Initial load
+    navigateTo('home');
+
+    // Animations for fadeInUp
+    const styleSheet = document.createElement('style');
+    styleSheet.textContent = `
+      @keyframes fadeInUp {
+        0% {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .animate-fadeInUp {
+        animation: fadeInUp 0.8s ease forwards;
+      }
+      .animate-fadeInUp.delay-200 {
+        animation-delay: 0.2s;
+      }
+    `;
+    document.head.appendChild(styleSheet);
+  </script>
+</body>
+</html>
